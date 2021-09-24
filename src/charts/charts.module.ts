@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { CompaniesController } from './companies/companies.controller';
-import { CompaniesService } from './companies/companies.service';
+import { ConfigModule } from '@nestjs/config';
+import { ChartsController } from './charts.controller';
+import { ChartsService } from './charts.service';
+import { DatabaseClient } from './database-client.provider';
 
 @Module({
-  controllers: [CompaniesController],
-  providers: [CompaniesService],
+  imports: [ConfigModule],
+  controllers: [ChartsController],
+  providers: [ChartsService, DatabaseClient],
 })
 export class ChartsModule {}
