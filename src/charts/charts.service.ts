@@ -1,5 +1,6 @@
 import { Injectable, Inject, Logger } from '@nestjs/common'
 import { Client } from 'pg'
+import { CandlestickDto, WeekEntry } from './interfaces'
 
 @Injectable()
 export class ChartsService {
@@ -7,8 +8,8 @@ export class ChartsService {
 
   constructor(@Inject(Client) private readonly client: Client) {}
 
-  async getDataByTicker(ticker: string, year?: number) {
-    const { rows = null } = await this.client.query(
+  async getDataByTicker(ticker: string, year: number): Promise<CandlestickDto> {
+    const { rows = null } = await this.client.query<WeekEntry>(
       `select distinct
         date_part('week', date) as week,
         avg(low) over (partition by date_part('week', date)) as low,
@@ -25,6 +26,10 @@ export class ChartsService {
       [ticker, year]
     )
 
-    return rows
+    return {
+      startYear: Number(year),
+      endYear: Number(year) + 1,
+      entries: rows
+    }
   }
 }

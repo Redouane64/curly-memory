@@ -1,5 +1,13 @@
-import { Controller, Get, Logger, Param } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  HttpCode,
+  Logger,
+  Param,
+  ParseIntPipe
+} from '@nestjs/common'
 import { ChartsService } from './charts.service'
+import { CandlestickDto } from './interfaces'
 
 @Controller('charts')
 export class ChartsController {
@@ -8,10 +16,11 @@ export class ChartsController {
   constructor(private readonly chartsService: ChartsService) {}
 
   @Get(':ticker/:year')
+  @HttpCode(200)
   async candlestick(
     @Param('ticker') ticker: string,
-    @Param('year') year: number
-  ): Promise<unknown> {
+    @Param('year', ParseIntPipe) year: number
+  ): Promise<CandlestickDto> {
     return await this.chartsService.getDataByTicker(ticker, year)
   }
 }
