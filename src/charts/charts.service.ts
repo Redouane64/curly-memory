@@ -11,19 +11,19 @@ export class ChartsService {
   async getDataByTicker(ticker: string, year: number): Promise<CandlestickDto> {
     const { rows = null } = await this.client.query<WeekEntry>(
       `select distinct
-        date_part('week', date) as week,
-        avg(low) over (partition by date_part('week', date)) as low,
-        avg(high) over (partition by date_part('week', date)) as high,
-        avg(open) over (partition by date_part('week', date)) as open,
-        avg(close) over (partition by date_part('week', date)) as close
-      from
-          price_history
-      where
-          ticker = $1::text
+            extract(week from date) as week,
+            min(low) over (partition by extract(week from date)) as min_price,
+            max(high) over (partition by extract(week from date)) as max_price,
+            first_value(open) over (partition by extract(week from date) order by date asc) as open_price,
+            first_value(close) over (partition by extract(week from date) order by date desc) as close_price
+        from
+            price_history
+        where
+            ticker = $1::text
         and
-          date between make_date($2::integer,01,01) 
-            and make_date(($2::integer) + 1,12,31)
-      order by week`,
+            date between make_date($2::integer,01,01) and make_date(($2::integer),12,28)
+        order by week
+      `,
       [ticker, year]
     )
 
