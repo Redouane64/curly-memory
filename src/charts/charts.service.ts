@@ -1,9 +1,9 @@
-import { Injectable, Inject, Logger } from '@nestjs/common';
-import { Client } from 'pg';
+import { Injectable, Inject, Logger } from '@nestjs/common'
+import { Client } from 'pg'
 
 @Injectable()
 export class ChartsService {
-  private readonly logger = new Logger(ChartsService.name);
+  private readonly logger = new Logger(ChartsService.name)
 
   constructor(@Inject(Client) private readonly client: Client) {}
 
@@ -22,9 +22,9 @@ export class ChartsService {
       and
           date between make_date($2::integer,01,01) and make_date(($2::integer) + 1,01,01)
       order by week`,
-      [ticker, year],
-    );
+      [ticker, year]
+    )
 
-    return rows;
+    return rows
   }
 }
