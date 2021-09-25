@@ -6,7 +6,7 @@ import { CandlestickDto, WeekEntry } from './interfaces'
 export class ChartsService {
   private readonly logger = new Logger(ChartsService.name)
 
-  constructor(@Inject(Client) private readonly client: Client) {}
+  constructor(@Inject('Database') private readonly client: Client) {}
 
   async getDataByTicker(ticker: string, year: number): Promise<CandlestickDto> {
     const { rows = null } = await this.client.query<WeekEntry>(
@@ -20,16 +20,13 @@ export class ChartsService {
           price_history
       where
           ticker = $1::text
-      and
-          date between make_date($2::integer,01,01) and make_date(($2::integer) + 1,01,01)
+        and
+          date between make_date($2::integer,01,01) 
+            and make_date(($2::integer) + 1,12,31)
       order by week`,
       [ticker, year]
     )
 
-    return {
-      startYear: Number(year),
-      endYear: Number(year) + 1,
-      entries: rows
-    }
+    return { year, entries: rows }
   }
 }

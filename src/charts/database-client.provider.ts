@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { Client } from 'pg'
 
 export const DatabaseClient: FactoryProvider = {
-  provide: Client,
+  provide: 'Database',
   scope: Scope.DEFAULT,
   inject: [ConfigService],
   useFactory: async (config: ConfigService) => {
@@ -20,8 +20,8 @@ export const DatabaseClient: FactoryProvider = {
     try {
       await client.connect()
     } catch (error) {
-      logger.error('Unable to connecto to the database')
-      logger.error(error)
+      logger.error('Unable to connect to the database')
+      throw error
     }
 
     return client
