@@ -7,7 +7,6 @@ export interface WeekEntry {
 }
 
 export interface CandlestickDto {
-  startYear: number
-  endYear: number
+  year: number
   entries: WeekEntry[]
 }
